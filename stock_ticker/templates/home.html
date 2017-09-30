@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Stock Ticker</title>
+    <meta name="description" content="Financial stock tickers">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <!-- load bootstrap css -->
+    <link href="https://fonts.googleapis.com/css?family=Anton|News+Cycle|Roboto:300" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename ='style.css') }}">
+
+</head>
+
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+             {% if messages %}
+
+                   {% for message in messages %}
+                   <h1>{{ message }}</h1>
+                   {% endfor %}
+
+             {% endif %}
+          {% endwith %}
+        {# <h1>Welcome {{user}}!</h1> #}
+          <br>
+          <h1>Hello, {{ current_user.username }}.</h1>
+
+          <form class="form-search" action="" method="post">
+              <h2 class="form-search-header">Search for stocks here</h2>
+              <input type="text" placeholder="Stock Symbol" name="stock" value="{{ request.form.stock }}" id="stock-symbol" required>
+              <button class="btn btn-default" type="button" name="search-button">Search</button>
+          </form>
+
+          <h3>Your Stocks</h3>
+              <ul>
+                  {% for stock in current_user.stock %}
+                  <li>{{ stock }}</li>
+                  {% endfor %}
+              </ul>
+
+          {% if error %}
+            <p class="error"><strong>Error:</strong> {{ error }}
+          {% endif %}
+
+          <a href='/logout'><button class="btn btn-default" type="submit" value="Logout">Logout</button></a>
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="static/js/script.js"> </script>
+</body>
+
+</html>
