@@ -17,38 +17,47 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    stocks = db.relationship('User_Stock', backref='user', lazy=True)
+    stocks = db.relationship('Stock', backref='user', lazy=True)
 
     def __init__(self, username, stocks):
         self.username = username
         self.stocks = stocks
 
-    def __repr__(self):
-        return '<User %r>' % self.username
+    # def __repr__(self):
+    #     return '<User %r>' % self.username
 
-class User_Stock(db.Model):
-    __tablename__ = 'user_stock'
+class Stock(db.Model):
+    __tablename__ = 'stock'
     id = db.Column(db.Integer, primary_key=True)
-    stock = db.Column(db.String(50), nullable=False)
+    symbol = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'),
         nullable=False)
-    stock_data = db.relationship('Stock_Data', backref='user_stock', lazy=True)
+    stock_data = db.relationship('Stock_Data', backref='stock', lazy=True)
 
     # user = relationship("User", back_populates="stocks")
+    def __init__(self, symbol, user_id, stock_data):
+        self.symbol = symbol
+        self.user_id = user_id
+        self.stock_data = stock_data
 
-    def __repr__(self):
-        return "<User_Stock(stock='%s')>" % self.stock
+    # def __repr__(self):
+    #     return "<User_Stock(symbol='%s')>" % self.symbol
 
 class Stock_Data(db.Model):
     __tablename__ = 'stock_data'
     id = db.Column(db.Integer, primary_key=True)
     stock_price = db.Column(db.String(10), nullable=False)
     quote_time = db.Column(db.String(10), nullable=False)
-    user_stock_id = db.Column(db.Integer, db.ForeignKey('user_stock.id'),
+    stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'),
         nullable=False)
 
-    def __repr__(self):
-        return "<Stock_Data(data='%s')>" % self.price
+    def __init__(self, stock_price, quote_time, stock_id):
+        self.stock_price = stock_price
+        self.quote_time = quote_time
+        self.stock_id = stock_id
+
+    # def __repr__(self):
+    #     return "<Stock_Data(data='%s')>" % self.price
 
 @app.route('/')
 def index():
@@ -70,7 +79,6 @@ def login():
             if User.query.filter_by(username=username).first():
                 session['logged_in'] = True
                 session['username'] = username
-                # session['user_id'] = username
                 flash('Welcome back, ' + username + '!')
                 return redirect(url_for('home'))
             else:
@@ -78,6 +86,7 @@ def login():
                 db.session.add(user)
                 db.session.commit()
                 session['logged_in'] = True
+                session['username'] = username
                 flash('You were successfully logged in!')
                 return redirect(url_for('home'))
     return render_template('login.html', error=error)
@@ -100,12 +109,24 @@ def home():
 def search():
     request.get_data()
     data = request.json
-    print('symbol: ', data.symbol)
-    print('symbol: ', data.LastTradePriceOnly)
-    print('symbol: ', data.LastTradeDate + " at " + data.LastTradeTime)
+    current_user = User.query.filter_by(username=session['username']).first()
+    print('symbol: ', data['symbol'])
+    print('symbol: ', data['LastTradePriceOnly'])
+    print('symbol: ', data['LastTradeDate'] + " at " + data['LastTradeTime'])
+    print('USERNAME?? ', current_user.username)
+    print('USER ID?? ', current_user.id)
+    # db.session.add(User_Stock(data['symbol']), current_user.id)
+    # db.session.add(Stock_Data(data['LastTradePriceOnly'], data['LastTradeTime']))
+    # db.session.commit()
+    # stock = Stock.query.filter_by(stock=data['symbol']).first()
+    # print('STOCK?!? ', stock)
 
     return json.dumps(data)
     # ({'symbol': data.symbol,'quote': data.quote})
+
+# db.drop_all()
+db.create_all()
+db.session.commit()
 
 if __name__ == '__main__':
      app.run()
