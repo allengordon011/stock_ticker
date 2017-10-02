@@ -29,16 +29,13 @@ class User(db.Model):
 class Stock(db.Model):
     __tablename__ = 'stock'
     id = db.Column(db.Integer, primary_key=True)
-    symbol = db.Column(db.String(50), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'),
-        nullable=False)
+    symbol = db.Column(db.String(50), nullable=False, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     stock_data = db.relationship('Stock_Data', backref='stock', lazy=True)
 
     # user = relationship("User", back_populates="stocks")
-    def __init__(self, symbol, user_id, stock_data):
+    def __init__(self, symbol):
         self.symbol = symbol
-        self.user_id = user_id
-        self.stock_data = stock_data
 
     # def __repr__(self):
     #     return "<User_Stock(symbol='%s')>" % self.symbol
@@ -48,13 +45,11 @@ class Stock_Data(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     stock_price = db.Column(db.String(10), nullable=False)
     quote_time = db.Column(db.String(10), nullable=False)
-    stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'),
-        nullable=False)
+    stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'))
 
-    def __init__(self, stock_price, quote_time, stock_id):
+    def __init__(self, stock_price, quote_time):
         self.stock_price = stock_price
         self.quote_time = quote_time
-        self.stock_id = stock_id
 
     # def __repr__(self):
     #     return "<Stock_Data(data='%s')>" % self.price
@@ -73,13 +68,14 @@ def login():
         username = ''.join(request.form.getlist('username'))
         if username == '':
             error = 'Please enter a username.'
-            # return login()
+            return render_template('login.html', error=error)
         else:
             user = User.query.filter_by(username=username).first()
             if User.query.filter_by(username=username).first():
                 session['logged_in'] = True
                 session['username'] = username
                 flash('Welcome back, ' + username + '!')
+                print('LOGIN SESSION: ', session)
                 return redirect(url_for('home'))
             else:
                 user = User(username, [])
@@ -94,35 +90,47 @@ def login():
 @app.route('/logout')
 def logout():
     session['logged_in'] = False
-    return index()
+    return login()
     # remove the username from the session if it's there
     # session.pop('username', None)
-    # return redirect(url_for('login'))
 
 @app.route('/home', methods=['GET'])
 def home():
-    current_user = User.query.filter_by(username=session['username']).first()
-    return render_template('home.html', current_user=current_user)
+    if request.method == 'GET':
+        stock_dict = {}
+        stock_list = []
+        current_user = User.query.filter_by(username=session['username']).first()
+        stocks = Stock.query.all()
+        for stock in stocks:
+            symbol = stock.symbol
+            stock_id = stock.id
+            data = Stock_Data.query.filter_by(id=stock_id).first()
+            price = data.stock_price
+            time = data.quote_time
+            stock_dict.update({'symbol':symbol, 'price':'$'+str(price), 'time':time})
+            stock_list.append(stock_dict)
+            stock_dict = {}
+        return render_template('home.html', current_user=current_user, stock_list=stock_list)
+    if request.method == 'POST':
+        return 'POST TO HOME'
 
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    request.get_data()
-    data = request.json
-    current_user = User.query.filter_by(username=session['username']).first()
-    print('symbol: ', data['symbol'])
-    print('symbol: ', data['LastTradePriceOnly'])
-    print('symbol: ', data['LastTradeDate'] + " at " + data['LastTradeTime'])
-    print('USERNAME?? ', current_user.username)
-    print('USER ID?? ', current_user.id)
-    # db.session.add(User_Stock(data['symbol']), current_user.id)
-    # db.session.add(Stock_Data(data['LastTradePriceOnly'], data['LastTradeTime']))
-    # db.session.commit()
-    # stock = Stock.query.filter_by(stock=data['symbol']).first()
-    # print('STOCK?!? ', stock)
-
-    return json.dumps(data)
-    # ({'symbol': data.symbol,'quote': data.quote})
+    if request.method == 'POST':
+        error = None
+        request.get_data()
+        data = request.json
+        if data['LastTradeDate'] == None:
+            error = 'No data available for this stock.'
+            return render_template('home.html', error=error)
+        else:
+            time = data['LastTradeDate'] + ' at ' + data['LastTradeTime']
+            db.session.add(Stock(data['symbol']))
+            db.session.add(Stock_Data(data['LastTradePriceOnly'], time))
+            db.session.commit()
+            return redirect(url_for('home'))
+            # return json.dumps(data)
 
 # db.drop_all()
 db.create_all()

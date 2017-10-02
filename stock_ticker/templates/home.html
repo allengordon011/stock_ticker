@@ -18,41 +18,47 @@
 
 <body>
     <div class="container">
+
+        <section class="flash">
         {% with messages = get_flashed_messages() %}
              {% if messages %}
-
                    {% for message in messages %}
-                   <h1>{{ message }}</h1>
+                   {{ message }}
                    {% endfor %}
-
              {% endif %}
           {% endwith %}
-        {# <h1>Welcome {{user}}!</h1> #}
-          <br>
-          <h1>Hello, {{ current_user.username }}.</h1>
+      </section>
+
+      <div class="main">
+          <h1>Hello, {{ session.username }}.</h1>
 
           <form class="form-search" action="" method="post">
               <h2 class="form-search-header">Search for stocks here</h2>
               <input type="text" placeholder="Stock Symbol" name="stock" value="{{ request.form.stock }}" id="stock-symbol" required>
               <button class="btn btn-default" type="button" name="search-button">Search</button>
           </form>
+          <div class="stocks-container">
+              <div class="your-stocks">
+                  <h3>Your Stocks</h3>
+                    {% for stock in stock_list %}
+                        <div class='stock'>
+                            {{ stock.symbol }}  {{ stock.price }}  {{ stock.time }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
 
-          <h3>Your Stocks</h3>
-              <ul>
-                  {% for stock in current_user.stock %}
-                  <li>{{ stock }}</li>
-                  {% endfor %}
-              </ul>
-
+          <section class="error">
           {% if error %}
             <p class="error"><strong>Error:</strong> {{ error }}
           {% endif %}
-
+        </section>
           <a href='/logout'><button class="btn btn-default" type="submit" value="Logout">Logout</button></a>
+      </div>
     </div>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="static/js/script.js"> </script>
-</body>
 
+</body>
 </html>

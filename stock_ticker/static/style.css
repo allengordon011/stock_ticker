@@ -1,7 +1,27 @@
 body {
     padding: 25px;
+    text-align: center;
+    height: 100vh;
+    background: url('./images/clocks.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
 }
 
 .container {
-    border: solid black 1px;
+    padding: 25px;
 }
+
+.stocks-container {
+    display: flex;
+}
+.stock {
+    border: solid grey 1px;
+    padding: 12px;
+    width: 100px;
+}
+
+.stock:nth-child(even) {background: white}
+.stock:nth-child(odd) {background: lightgrey}

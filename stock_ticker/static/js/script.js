@@ -8,7 +8,7 @@ $(function() {
             type: 'POST',
             success: function(response) {
                 let quote = response.query.results.quote;
-                // console.log(JSON.stringify(quote))
+                console.log(quote)
                 $.ajax({
                     url: '/search',
                     data: JSON.stringify(quote),
