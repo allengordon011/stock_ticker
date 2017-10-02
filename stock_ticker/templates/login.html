@@ -2,7 +2,6 @@
 <html>
 
 <head>
-
     <title>Stock Ticker Login</title>
     <meta name="description" content="Financial stock tickers">
     <meta charset="utf-8">
@@ -13,25 +12,29 @@
     <!-- load bootstrap css -->
     <link href="https://fonts.googleapis.com/css?family=Anton|News+Cycle|Roboto:300" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename ='style.css') }}">
-
 </head>
 
 <body>
     <div class="container">
-      <h1>Please login</h1>
-      {% if error %}
-      <p><strong>Error:</strong> {{ error }}
-      {% endif %}
-      <br>
-      <form action="/login" method="post">
-        <input type="hidden" value="{{ request.args.get('next', '') }}"/>
-        <input type="text" placeholder="Username" name="username" value="{{
-          request.form.username }}">
-        <input class="btn btn-default" type="submit" value="Login">
-      </form>
-      {% if error %}
-        <p class="error"><strong>Error:</strong> {{ error }}
-      {% endif %}
+        <div class="screen">
+          <h1>Welcome to Stock Ticker</h1>
+
+          <div class="login">
+              <h3>Please login</h3>
+              <div class="form-group">
+                  <form action="/login" method="post">
+                    {# <input type="hidden" value="{{ request.args.get('next', '') }}"/> #}
+                    <input type="text" class="form-control" placeholder="Username" name="username" value="{{
+                      request.form.username }}">
+                    <input class="btn btn-default" type="submit" value="Login">
+                  </form>
+          </div>
+
+              {% if error %}
+                <p class="error"><strong>Error:</strong> {{ error }}
+              {% endif %}
+          </div>
+      </div>
     </div>
 </body>
 

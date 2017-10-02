@@ -10,18 +10,57 @@ body {
 
 }
 
+.screen {
+    padding: 16px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.flash {
+    
+}
+
 .container {
     padding: 25px;
 }
 
 .stocks-container {
     display: flex;
+    align-items: center;
+    flex-direction: column;
 }
+
+.form-group {
+    display: flex;
+    justify-content: center;
+}
+
+.form-control {
+    width: 200px;
+    text-align: center;
+    margin: 10px auto;
+}
+
 .stock {
     border: solid grey 1px;
     padding: 12px;
-    width: 100px;
+    width: 150px;
 }
 
-.stock:nth-child(even) {background: white}
-.stock:nth-child(odd) {background: lightgrey}
+.your-stocks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 25px;
+}
+
+.stock:nth-child(even) {
+    background: white
+}
+.stock:nth-child(odd) {
+    background: lightgrey
+}
+
+.hidden-flash {
+    display: none;
+}
