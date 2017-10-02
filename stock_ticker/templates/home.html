@@ -39,12 +39,13 @@
                         <div class="no-stocks">
                             {{ no_stocks }}
                         </div>
-                        {# {% elif %} #}
                         {% else %}
                         {% for stock in stock_list %}
                         <div class='stock'>
                             {{ stock.symbol }} {{ stock.price }} {{ stock.time }}
+                            <br>
                         </div>
+                        <a href="/delete" id={{ stock.symbol }} class="delete"><span class="glyphicon glyphicon-trash"></a>
                         {% endfor %}
                         {% endif %}
                     </div>
@@ -54,7 +55,7 @@
                     {% if error %}
                     <p class="error"><strong>Error:</strong> {{ error }} {% endif %}
                 </section>
-                <a href='/logout'><button class="btn btn-default" value="Logout">Logout</button></a>
+                <a href="/logout"><button class="btn btn-default" value="Logout">Logout</button></a>
         </div>
     </div>
 

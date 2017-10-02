@@ -63,6 +63,12 @@ form {
     background: lightgrey
 }
 
+.delete {
+    padding: 0 7px 3px 2px;
+    display: flex;
+    align-self: flex-end;
+}
+
 .hidden-flash {
     display: none;
 }

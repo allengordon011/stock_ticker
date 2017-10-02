@@ -1,5 +1,6 @@
 from flask import Flask, request, flash, url_for, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import delete
 import datetime
 import json
 
@@ -90,9 +91,8 @@ def home():
         current_user = User.query.filter_by(username=session['username']).first()
         user_id = current_user.id
         stocks = Stock.query.filter_by(user_id=user_id).all()
-        print('STOCKS: ', stocks)
-        if stocks == None:
-            no_stocks = ['No stocks found.']
+        if stocks == []:
+            no_stocks = 'No stocks saved yet.'
             return render_template('home.html', current_user=current_user.username, no_stocks=no_stocks)
         else:
             for stock in stocks:
@@ -124,6 +124,22 @@ def search():
         stock = Stock.query.filter_by(symbol=symbol).first()
         db.session.add(Stock_Data(data['LastTradePriceOnly'], time, stock.id))
         db.session.commit()
+        return redirect(url_for('home'))
+        # return json.dumps(data)
+
+@app.route('/delete', methods=['POST'])
+def delete():
+    if request.method == 'POST':
+        error = None
+        request.get_data()
+        symbol = request.json
+        print('SYMBOL: ', symbol)
+        stock = db.session.query(Stock).filter_by(symbol=symbol).first()
+        db.session.delete(stock)
+        stock_data = Stock_Data.query.filter_by(stock_id=stock.id).first()
+        db.session.delete(stock_data)
+        db.session.commit()
+
         return redirect(url_for('home'))
         # return json.dumps(data)
 
