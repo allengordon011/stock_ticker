@@ -1,7 +1,8 @@
 $(function() {
-    $('button').click(function() {
+    $('#form-search').on('submit', function(e) {
+        e.preventDefault();
         var stock = $('#stock-symbol').val();
-        // console.log('STOCK: ', stock)
+        console.log('STOCK: ', stock)
 
         $.ajax({
             url: 'https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22' + stock + '%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=',
@@ -9,6 +10,12 @@ $(function() {
             success: function(response) {
                 let quote = response.query.results.quote;
                 console.log(quote)
+                console.log(quote.LastTradePriceOnly)
+                if(quote.LastTradePriceOnly == null) {
+                    console.log('BAD SEARCH');
+                    $('.hidden-flash').show();
+                    return
+                } else {
                 $.ajax({
                     url: '/search',
                     data: JSON.stringify(quote),
@@ -21,7 +28,7 @@ $(function() {
                         console.log(error);
                     }
                 });
-
+                }
             },
             error: function(error) {
                 console.log(error);
@@ -32,7 +39,11 @@ $(function() {
 });
 
 $(document).ready(function(){
-                    setTimeout(function() {
-                    $(".flash").delay(5000).fadeOut();
-        });
+    setTimeout(function() {
+    $(".flash").delay(5000).fadeOut();
     });
+});
+
+$(document).ajaxStop(function(){
+    window.location.reload();
+});

@@ -22,15 +22,15 @@
                 {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %} {{ message }} {% endfor %} {% endif %} {% endwith %}
             </section>
 
-            <div class="main">
                 <h1>Hello, {{ current_user }}.</h1>
-                <div class="form-group">
-                    <form class="form-search" action="" method="post">
-                        <h2 class="form-search-header">Search for stocks here</h2>
-                        <input type="text" class="form-control" placeholder="Stock Symbol" name="stock" id="stock-symbol" required>
-                        <button class="btn btn-default" type="button" name="search-button">Search</button>
-                    </form>
-                </div>
+                <form id="form-search" action="/search" method="post">
+                    <div class="form-group">
+                        <h3 class="form-search-header">Search for stocks here:</h3>
+                        <input class="form-control" type="text" placeholder="Stock Symbol" name="stock" id="stock-symbol" required>
+                        <button class="btn btn-default" name="search-button">Search</button>
+                    </div>
+                </form>
+
                 <div class="hidden-flash">Please try a different stock symbol.</div>
                 <div class="stocks-container">
                     <h3>Your Stocks</h3>
@@ -54,8 +54,7 @@
                     {% if error %}
                     <p class="error"><strong>Error:</strong> {{ error }} {% endif %}
                 </section>
-                <a href='/logout'><button class="btn btn-default" type="submit" value="Logout">Logout</button></a>
-            </div>
+                <a href='/logout'><button class="btn btn-default" value="Logout">Logout</button></a>
         </div>
     </div>
 

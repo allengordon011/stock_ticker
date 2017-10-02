@@ -14,10 +14,12 @@ body {
     padding: 16px;
     background-color: white;
     border-radius: 10px;
+    width: 50%;
+    margin: 0 auto;
 }
 
 .flash {
-    
+
 }
 
 .container {
@@ -30,9 +32,16 @@ body {
     flex-direction: column;
 }
 
-.form-group {
+form {
     display: flex;
     justify-content: center;
+}
+
+.your-stocks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 10px 21px 25px;
 }
 
 .form-control {
@@ -45,13 +54,6 @@ body {
     border: solid grey 1px;
     padding: 12px;
     width: 150px;
-}
-
-.your-stocks {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 25px;
 }
 
 .stock:nth-child(even) {
