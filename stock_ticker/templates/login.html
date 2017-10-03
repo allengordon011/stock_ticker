@@ -16,25 +16,26 @@
 
 <body>
     <div class="container">
-        <div class="screen">
+
           <h1>Welcome to Stock Ticker</h1>
 
           <div class="login">
               <h3>Please login, or enter a new username.</h3>
               <form action="/login" method="post">
                   <div class="form-group">
-                    {# <input type="hidden" value="{{ request.args.get('next', '') }}"/> #}
                     <input type="text" class="form-control" placeholder="Username" name="username" value="{{
-                      request.form.username }}">
+                      request.form.username }}" required>
                     <input class="btn btn-default" type="submit" value="Login">
                 </div>
             </form>
 
+            <section class="error">
               {% if error %}
                 <p class="error"><strong>Error:</strong> {{ error }}
               {% endif %}
+            </section>
+
           </div>
-      </div>
     </div>
 </body>
 

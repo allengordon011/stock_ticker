@@ -1,4 +1,7 @@
 body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 25px;
     text-align: center;
     height: 100vh;
@@ -7,23 +10,17 @@ body {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-
 }
 
-.screen {
-    padding: 16px;
-    background-color: white;
-    border-radius: 10px;
-    width: 50%;
-    margin: 0 auto;
-}
-
-.flash {
-
+.hide {
+  display: none;
 }
 
 .container {
     padding: 25px;
+    background-color: rgba(255,255,255,.8);
+    border-radius: 10px;
+    width: 75%;
 }
 
 .stocks-container {

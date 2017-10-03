@@ -1,0 +1,13 @@
+include AUTHORS.rst
+include LICENSE
+include README.rst
+
+recursive-include tests *
+recursive-include stock_ticker *.py
+recursive-include stock_ticker/templates *
+recursive-include stock_ticker/static *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+prune stock_ticker/build
+
+recursive-include docs *.rst conf.py Makefile make.bat *.jpg *.png *.gif

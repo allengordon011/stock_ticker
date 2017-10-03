@@ -10,11 +10,9 @@ $(function() {
             type: 'POST',
             success: function(response) {
                 let quote = response.query.results.quote;
-                // console.log(quote)
                 if(quote.LastTradePriceOnly == null) {
                     console.log('Bad Search');
-                    $('.hidden-flash').show();
-                    return
+                    $('.hidden-flash').show(500);
                 } else {
                 $.ajax({
                     url: '/search',
@@ -51,7 +49,6 @@ $(function() {
             contentType: "application/json; charset=utf-8",
             success: function() {
                 console.log('Successful DELETE post');
-                // $('.delete').remove();
             },
             error: function(error) {
                 console.log(error);
@@ -60,13 +57,16 @@ $(function() {
     });
 });
 
+//hide flash messages
 $(document).ready(function(){
     setTimeout(function() {
-    $(".flash").delay(5000).fadeOut();
+    $(".flash").delay(3000).fadeOut();
     });
 });
 
 // reload after stock search
 $(document).ajaxStop(function(){
-    window.location.reload();
+    setTimeout(function(){
+      window.location.reload();
+    }, 2000);
 });
