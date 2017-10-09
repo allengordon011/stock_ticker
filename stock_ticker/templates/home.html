@@ -12,6 +12,7 @@
     <!-- load bootstrap css -->
     <link href="https://fonts.googleapis.com/css?family=Anton|News+Cycle|Roboto:300" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename ='style.css') }}">
+
 </head>
 
 <body>
@@ -32,18 +33,22 @@
 
                 <div class="hidden-flash">Please try a different stock symbol.</div>
                 <div class="stocks-container">
-                    <h3>Your Stocks</h3>
-                    <div class="your-stocks">
+                    <h3 id="foo">Your Stocks</h3>
+                    <div id="stocksToUpdate" style="display: none">{{ stock_list }}</div>
+                    <p class="sub-header">(Click on the stock below for more information)</p>
+                    <div class="your-stocks" id="stocks">
                         {% if no_stocks %}
                         <div class="no-stocks">
                             {{ no_stocks }}
                         </div>
                         {% else %}
                         {% for stock in stock_list %}
-                        <div class='stock'>
-                            {{ stock.symbol }} {{ stock.price }} {{ stock.time }}
-                            <br>
-                        </div>
+                        <ul class='stock'>
+                            <li>Stock Symbol: {{ stock.symbol }}</li>
+                            <li>Quote Price: {{ stock.price }}</li>
+                            <li>Quote Time: {{ stock.time }}</li>
+                            <li>Change From Previous Close: {{ stock.change }}</li>
+                        </ul>
                         <a href="/delete" id={{ stock.symbol }} class="delete"><span class="glyphicon glyphicon-trash"></a>
                         {% endfor %}
                         {% endif %}

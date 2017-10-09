@@ -35,13 +35,15 @@ class Stock(db.Model):
 class Stock_Data(db.Model):
     __tablename__ = 'stock_data'
     id = db.Column(db.Integer, primary_key=True)
-    stock_price = db.Column(db.String(10), nullable=False)
+    stock_price = db.Column(db.Float, nullable=False)
     quote_time = db.Column(db.String(10), nullable=False)
+    prev_close = db.Column(db.Float, nullable=False)
     stock_id = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, stock_price, quote_time, stock_id):
+    def __init__(self, stock_price, quote_time, prev_close, stock_id):
         self.stock_price = stock_price
         self.quote_time = quote_time
+        self.prev_close = prev_close
         self.stock_id = stock_id
 
 @app.route('/')
@@ -97,17 +99,39 @@ def home():
         else:
             for stock in stocks:
                 symbol = stock.symbol
+                print('SYMBOL: ', symbol)
+                # update(symbol)
                 stock_id = stock.id
                 data = Stock_Data.query.filter_by(id=stock_id).first()
-                price = data.stock_price
+                price = float(data.stock_price)
                 time = data.quote_time
-                stock_dict.update({'symbol':symbol, 'price':'$'+str(price), 'time':time})
+                prev = float(data.prev_close)
+                change = round(price - prev, 2)
+                stock_dict.update({'symbol':symbol, 'price':'$'+str(price), 'time':time, 'change':'$'+str(change)})
                 stock_list.append(stock_dict)
                 stock_dict = {}
             return render_template('home.html', current_user=current_user.username, stock_list=stock_list)
     if request.method == 'POST':
         return 'POST TO HOME'
 
+@app.route('/update', methods=['GET', 'POST'])
+def update(stock):
+    print('UPDATE ROUTE CALLED!', stock)
+    # if request.method == 'POST':
+    #     error = None
+    #     request.get_data()
+    #     data = request.json
+    #     current_user = User.query.filter_by(username=session['username']).first()
+    #     user_id = current_user.id
+    #     symbol = data['symbol']
+    #     time = data['LastTradeDate'] + ' at ' + data['LastTradeTime']
+    #     db.session.add(Stock(symbol, user_id))
+    #     db.session.commit()
+    #     stock = Stock.query.filter_by(symbol=symbol).first()
+    #     db.session.add(Stock_Data(data['LastTradePriceOnly'], time, data['PreviousClose'], stock.id))
+    #     db.session.commit()
+        # return redirect(url_for('home'))
+    return render_template('home.html', stockToUpdate=stock)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
@@ -122,7 +146,7 @@ def search():
         db.session.add(Stock(symbol, user_id))
         db.session.commit()
         stock = Stock.query.filter_by(symbol=symbol).first()
-        db.session.add(Stock_Data(data['LastTradePriceOnly'], time, stock.id))
+        db.session.add(Stock_Data(data['LastTradePriceOnly'], time, data['PreviousClose'], stock.id))
         db.session.commit()
         return redirect(url_for('home'))
         # return json.dumps(data)
