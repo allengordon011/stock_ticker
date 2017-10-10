@@ -57,10 +57,11 @@ ul {
     padding: 12px;
 }
 
-.stock:nth-child(even) {
+.your-stocks:nth-child(even) {
     background: white
 }
-.stock:nth-child(odd) {
+
+.your-stocks:nth-child(odd) {
     background: lightgrey
 }
 
