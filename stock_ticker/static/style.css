@@ -1,4 +1,5 @@
 body {
+    font-family: "Roboto", sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,17 +48,25 @@ form {
     margin: 10px auto;
 }
 
+ul {
+    list-style: none;
+}
+
 .stock {
     border: solid grey 1px;
     padding: 12px;
-    width: 150px;
 }
 
-.stock:nth-child(even) {
+.your-stocks:nth-child(even) {
     background: white
 }
-.stock:nth-child(odd) {
+
+.your-stocks:nth-child(odd) {
     background: lightgrey
+}
+
+.sub-header {
+    font-size: .9em;
 }
 
 .delete {

@@ -35,13 +35,15 @@ class Stock(db.Model):
 class Stock_Data(db.Model):
     __tablename__ = 'stock_data'
     id = db.Column(db.Integer, primary_key=True)
-    stock_price = db.Column(db.String(10), nullable=False)
+    stock_price = db.Column(db.Float, nullable=False)
     quote_time = db.Column(db.String(10), nullable=False)
+    prev_close = db.Column(db.Float, nullable=False)
     stock_id = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, stock_price, quote_time, stock_id):
+    def __init__(self, stock_price, quote_time, prev_close, stock_id):
         self.stock_price = stock_price
         self.quote_time = quote_time
+        self.prev_close = prev_close
         self.stock_id = stock_id
 
 @app.route('/')
@@ -98,15 +100,32 @@ def home():
             for stock in stocks:
                 symbol = stock.symbol
                 stock_id = stock.id
-                data = Stock_Data.query.filter_by(id=stock_id).first()
-                price = data.stock_price
+                data = Stock_Data.query.filter_by(stock_id=stock_id).first()
+                price = float(data.stock_price)
                 time = data.quote_time
-                stock_dict.update({'symbol':symbol, 'price':'$'+str(price), 'time':time})
+                prev = float(data.prev_close)
+                change = round(price - prev, 2)
+                stock_dict.update({'symbol':symbol, 'price':'$'+str(price), 'time':time, 'change':'$'+str(change)})
                 stock_list.append(stock_dict)
                 stock_dict = {}
             return render_template('home.html', current_user=current_user.username, stock_list=stock_list)
+
+@app.route('/update', methods=['GET', 'POST'])
+def update():
     if request.method == 'POST':
-        return 'POST TO HOME'
+        request.get_data()
+        data = request.json
+        current_user = User.query.filter_by(username=session['username']).first()
+        user_id = current_user.id
+        stock_to_update = Stock.query.filter_by(user_id=user_id, symbol=data['symbol']).first()
+        stock_id = stock_to_update.id
+        stock_data_to_update = Stock_Data.query.filter_by(stock_id=stock_id).first()
+        stock_data_to_update.stock_price = data['LastTradePriceOnly']
+        stock_data_to_update.quote_time = data['LastTradeDate'] + ' at ' + data['LastTradeTime']
+        stock_data_to_update.prev_close = data['PreviousClose']
+        db.session.commit()
+        # return redirect(url_for('home'))
+        return json.dumps(data)
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -118,14 +137,38 @@ def search():
         current_user = User.query.filter_by(username=session['username']).first()
         user_id = current_user.id
         symbol = data['symbol']
+        price = data['LastTradePriceOnly']
         time = data['LastTradeDate'] + ' at ' + data['LastTradeTime']
+        prev = data['PreviousClose']
         db.session.add(Stock(symbol, user_id))
         db.session.commit()
-        stock = Stock.query.filter_by(symbol=symbol).first()
-        db.session.add(Stock_Data(data['LastTradePriceOnly'], time, stock.id))
+        stock = Stock.query.filter_by(symbol=symbol, user_id=user_id).first()
+        db.session.add(Stock_Data(price, time, prev, stock.id))
         db.session.commit()
-        return redirect(url_for('home'))
-        # return json.dumps(data)
+        # return redirect(url_for('home'))
+        return json.dumps(data)
+    if request.method == 'GET':
+        stock_dict = {}
+        stock_list = []
+        current_user = User.query.filter_by(username=session['username']).first()
+        user_id = current_user.id
+        stocks = Stock.query.filter_by(user_id=user_id).all()
+        # if stocks == []:
+        #     no_stocks = 'No stocks saved yet.'
+        #     return render_template('home.html', current_user=current_user.username, no_stocks=no_stocks)
+        # else:
+        for stock in stocks:
+            symbol = stock.symbol
+            stock_id = stock.id
+            data = Stock_Data.query.filter_by(stock_id=stock_id).first()
+            price = float(data.stock_price)
+            time = data.quote_time
+            prev = float(data.prev_close)
+            change = round(price - prev, 2)
+            stock_dict.update({'symbol':symbol, 'price':'$'+str(price), 'time':time, 'change':'$'+str(change)})
+            stock_list.append(stock_dict)
+            stock_dict = {}
+        return json.dumps(stock_list)
 
 @app.route('/delete', methods=['POST'])
 def delete():
@@ -133,15 +176,13 @@ def delete():
         error = None
         request.get_data()
         symbol = request.json
-        print('SYMBOL: ', symbol)
         stock = db.session.query(Stock).filter_by(symbol=symbol).first()
         db.session.delete(stock)
         stock_data = Stock_Data.query.filter_by(stock_id=stock.id).first()
         db.session.delete(stock_data)
         db.session.commit()
-
-        return redirect(url_for('home'))
-        # return json.dumps(data)
+        # return redirect(url_for('home'))
+        return json.dumps(symbol)
 
 db.drop_all()
 db.create_all()
