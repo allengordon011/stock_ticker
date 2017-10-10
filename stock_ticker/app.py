@@ -38,12 +38,22 @@ class Stock_Data(db.Model):
     stock_price = db.Column(db.Float, nullable=False)
     quote_time = db.Column(db.String(10), nullable=False)
     prev_close = db.Column(db.Float, nullable=False)
+    stock_name = db.Column(db.String(20), nullable=False)
+    year_high = db.Column(db.Float, nullable=False)
+    year_low = db.Column(db.Float, nullable=False)
+    market_cap = db.Column(db.String(10), nullable=False)
+    percent_change = db.Column(db.String(10), nullable=False)
     stock_id = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, stock_price, quote_time, prev_close, stock_id):
+    def __init__(self, stock_price, quote_time, prev_close, stock_name, year_high, year_low, market_cap, percent_change, stock_id):
         self.stock_price = stock_price
         self.quote_time = quote_time
         self.prev_close = prev_close
+        self.stock_name = stock_name
+        self.year_high = year_high
+        self.year_low = year_low
+        self.market_cap = market_cap
+        self.percent_change = percent_change
         self.stock_id = stock_id
 
 @app.route('/')
@@ -94,18 +104,23 @@ def home():
         user_id = current_user.id
         stocks = Stock.query.filter_by(user_id=user_id).all()
         if stocks == []:
-            no_stocks = 'No stocks saved yet.'
+            no_stocks = 'No saved stocks yet.'
             return render_template('home.html', current_user=current_user.username, no_stocks=no_stocks)
         else:
             for stock in stocks:
                 symbol = stock.symbol
                 stock_id = stock.id
                 data = Stock_Data.query.filter_by(stock_id=stock_id).first()
-                price = float(data.stock_price)
+                price = float("{0:.2f}".format(data.stock_price))
                 time = data.quote_time
-                prev = float(data.prev_close)
-                change = round(price - prev, 2)
-                stock_dict.update({'symbol':symbol, 'price':'$'+str(price), 'time':time, 'change':'$'+str(change)})
+                prev = float("{0:.2f}".format(data.prev_close))
+                change = float("{0:.2f}".format(price - prev))
+                name = data.stock_name
+                high = float("{0:.2f}".format(data.year_high))
+                low = float("{0:.2f}".format(data.year_low))
+                cap = data.market_cap
+                percent = data.percent_change                
+                stock_dict.update({'symbol':symbol, 'price':'$'+str(price), 'time':time, 'change':'$'+str(change), 'name':name, 'high':'$'+str(high), 'low':'$'+str(low), 'cap':'$'+str(cap), 'percent':percent})
                 stock_list.append(stock_dict)
                 stock_dict = {}
             return render_template('home.html', current_user=current_user.username, stock_list=stock_list)
@@ -124,7 +139,6 @@ def update():
         stock_data_to_update.quote_time = data['LastTradeDate'] + ' at ' + data['LastTradeTime']
         stock_data_to_update.prev_close = data['PreviousClose']
         db.session.commit()
-        # return redirect(url_for('home'))
         return json.dumps(data)
 
 
@@ -140,12 +154,16 @@ def search():
         price = data['LastTradePriceOnly']
         time = data['LastTradeDate'] + ' at ' + data['LastTradeTime']
         prev = data['PreviousClose']
+        name = data['Name']
+        high = data['YearHigh']
+        low = data['YearLow']
+        cap = data['MarketCapitalization']
+        percent = data['ChangeinPercent']
         db.session.add(Stock(symbol, user_id))
         db.session.commit()
         stock = Stock.query.filter_by(symbol=symbol, user_id=user_id).first()
-        db.session.add(Stock_Data(price, time, prev, stock.id))
+        db.session.add(Stock_Data(price, time, prev, name, high, low, cap, percent, stock.id))
         db.session.commit()
-        # return redirect(url_for('home'))
         return json.dumps(data)
     if request.method == 'GET':
         stock_dict = {}
@@ -153,19 +171,20 @@ def search():
         current_user = User.query.filter_by(username=session['username']).first()
         user_id = current_user.id
         stocks = Stock.query.filter_by(user_id=user_id).all()
-        # if stocks == []:
-        #     no_stocks = 'No stocks saved yet.'
-        #     return render_template('home.html', current_user=current_user.username, no_stocks=no_stocks)
-        # else:
         for stock in stocks:
             symbol = stock.symbol
             stock_id = stock.id
             data = Stock_Data.query.filter_by(stock_id=stock_id).first()
-            price = float(data.stock_price)
+            price = float("{0:.2f}".format(data.stock_price))
             time = data.quote_time
-            prev = float(data.prev_close)
-            change = round(price - prev, 2)
-            stock_dict.update({'symbol':symbol, 'price':'$'+str(price), 'time':time, 'change':'$'+str(change)})
+            prev = float("{0:.2f}".format(data.prev_close))
+            change = float("{0:.2f}".format(price - prev))
+            name = data.stock_name
+            high = float("{0:.2f}".format(data.year_high))
+            low = float("{0:.2f}".format(data.year_low))
+            cap = data.market_cap
+            percent = data.percent_change
+            stock_dict.update({'symbol':symbol, 'price':'$'+str(price), 'time':time, 'change':'$'+str(change), 'name':name, 'high':'$'+str(high), 'low':'$'+str(low), 'cap':'$'+str(cap), 'percent':percent})
             stock_list.append(stock_dict)
             stock_dict = {}
         return json.dumps(stock_list)

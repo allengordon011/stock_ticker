@@ -20,13 +20,11 @@ $(function() {
                     success: function() {
                         console.log('Successful API post');
                         location.reload();
-                        
                     },
                     error: function(error) {
                         console.log(error);
                     }
                 });
-                
                 }
             },
             error: function(error) {
@@ -42,7 +40,7 @@ function update() {
     var stocksToUpdate = document.getElementById('stocksToUpdate').innerHTML
     if(stocksToUpdate){
         let mod= stocksToUpdate.replace(/'/g, '"'); //remove outer quotation marks
-        let obj = JSON.parse(mod) //convert string
+        let obj = JSON.parse(mod); //convert string
         obj.forEach(function(stock){
             $.ajax({
                 url: 'https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22' + stock.symbol + '%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=',
@@ -98,7 +96,6 @@ $(document).ready(function(){
     setTimeout(function() {
     $(".flash").delay(3000).fadeOut();
     });
-    
     setTimeout(function() {
         update();
       }, 30000);
