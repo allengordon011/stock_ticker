@@ -203,7 +203,7 @@ def delete():
         # return redirect(url_for('home'))
         return json.dumps(symbol)
 
-db.drop_all()
+# db.drop_all()
 db.create_all()
 db.session.commit()
 
