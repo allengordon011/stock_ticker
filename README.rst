@@ -1,5 +1,11 @@
-**Stock Ticker**
-*A simple stock ticker web app for building and saving a user-specific list of stocks; and displaying a simple ticker of the list of stocks.*
+************
+Stock Ticker
+************
+
+A web app for fetching, saving, and displaying a user-specific list of stock quotes.
+####################################################################################
+
+![screenshot](/Stock_Ticker-Homepage.png?raw=true "Home Page)
 
 :Technology:
 -Python implemented through Flask and SQLAlchemy

@@ -5,6 +5,7 @@ body {
     justify-content: center;
     text-align: center;
     height: 100vh;
+    min-height: 800px;
     background: url('./images/clocks.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -25,6 +26,7 @@ body {
     justify-content: center;
     height: 100vh;
     width: 100%;
+    min-height: 800px;
     background-color: rgba(0,0,0,0.7);
 }
 
@@ -76,6 +78,7 @@ form {
     justify-content: center;
     align-self: center;
     border: 1px solid white;
+    border-radius: 5px;
     width: 350px;
     padding: 15px;
 }
@@ -94,7 +97,9 @@ form {
 }
 
 .stock {
-    border: solid grey 1px;
+    
+    min-height: 125px;
+    border: solid white 1px;
     border-radius: 5px;
     padding: 12px;
 }
@@ -122,8 +127,11 @@ form {
     padding: 0 7px 14px 2px;
     display: flex;
     align-self: flex-end;
+    color: white;
 }
 
 .hidden-flash {
     display: none;
+    color: white;
+    margin-top: 10px;
 }
