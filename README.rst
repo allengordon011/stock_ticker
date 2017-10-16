@@ -5,20 +5,21 @@ Stock Ticker
 A web app for fetching, saving, and displaying a user-specific list of stock quotes.
 ####################################################################################
 
-.. screenshot:: /Stock_Ticker-Homepage.png
+.. figure:: /Stock_Ticker-Homepage.png
     **Home Page**
 
 Technology
 **********
--Python implemented through Flask and SQLAlchemy
--HTML and CSS with Bootstrap
--JavaScript with jQuery and using ajax
+*Python implemented through Flask and SQLAlchemy
+*HTML and CSS with Bootstrap
+*JavaScript with jQuery and using ajax
 
 How to Install
--Navigate to a convenient directory, such as the “Desktop” or “Documents” folder
--Create a new directory called “stock_ticker” to house this project
--run (from your terminal) $ git clone
--*Not Required:* Install and activate a virtualenv (see: http://flask.pocoo.org/docs/0.12/installation/#installation)
+**************
+*Navigate to a convenient directory, such as the “Desktop” or “Documents” folder
+*Create a new directory called “stock_ticker” to house this project
+*run (from your terminal) $ git clone
+**Not Required:* Install and activate a virtualenv (see: http://flask.pocoo.org/docs/0.12/installation/#installation)
 
 *The following should be run from your terminal, while in the top-level folder (with the setup.py file):*
 
